@@ -26,3 +26,7 @@ server.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
 
+socket.on('error', (err) => {
+    console.error('Socket error:', err);
+  });
+  

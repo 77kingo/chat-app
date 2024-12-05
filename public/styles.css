@@ -1,0 +1,18 @@
+body {
+    padding: 20px;
+  }
+  
+  @media (max-width: 600px) {
+    .card-header, .card-footer {
+      text-align: center;
+    }
+  
+    .form-control {
+      width: 100%;
+    }
+  
+    #chat-box {
+      height: 200px;
+    }
+  }
+   
