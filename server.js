@@ -1,16 +1,14 @@
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
-const { initializeApp } = require('firebase-admin/app');
-const { getFirestore, collection, addDoc, getDocs } = require('firebase-admin/firestore');
+const admin = require('firebase-admin');
+const serviceAccount = require('./path/to/serviceAccountKey.json'); // Make sure to provide the correct path to your service account key JSON file
 
-// Firebase Admin SDK setup
-const serviceAccount = require('./path/to/serviceAccountKey.json');
-initializeApp({
-    credential: applicationDefault(),
-    databaseURL: 'https://your-database-name.firebaseio.com'
+// Initialize Firebase Admin SDK
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
 });
-const db = getFirestore();
+const db = admin.firestore();
 
 const app = express();
 const server = http.createServer(app);
@@ -26,14 +24,14 @@ io.on('connection', async (socket) => {
     console.log('New client connected');
 
     // Load previous messages
-    const messagesSnapshot = await getDocs(collection(db, 'messages'));
+    const messagesSnapshot = await db.collection('messages').get();
     messagesSnapshot.forEach((doc) => {
         socket.emit('chat message', doc.data());
     });
 
     socket.on('chat message', async (data) => {
         io.emit('chat message', data);
-        await addDoc(collection(db, 'messages'), data);
+        await db.collection('messages').add(data);
     });
 
     socket.on('disconnect', () => {
