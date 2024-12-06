@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 const admin = require('firebase-admin');
-const serviceAccount = require('./path/to/serviceAccountKey.json'); // Make sure to provide the correct path to your service account key JSON file
+const serviceAccount = require('./config/serviceAccountKey.json'); // Ensure this path is correct
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
