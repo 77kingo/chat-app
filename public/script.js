@@ -17,4 +17,8 @@ socket.on('chat message', (msg) => {
     messages.appendChild(item);
     window.scrollTo(0, document.body.scrollHeight);
 });
+app.use((req, res, next) => {
+    res.status(404).send('Page Not Found');
+});
 
+app.use(express.static('public'));
