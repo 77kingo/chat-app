@@ -6,15 +6,17 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
+app.get('/', (req, res) => {
+    res.send('Welcome to the Chat App!');
+});
+
 io.on('connection', (socket) => {
     console.log('New client connected');
 
-    // Handle socket errors
     socket.on('error', (err) => {
         console.error('Socket error:', err);
     });
 
-    // Handle client disconnection
     socket.on('disconnect', () => {
         console.log('Client disconnected');
     });
