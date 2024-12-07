@@ -2,9 +2,8 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 const admin = require('firebase-admin');
-const serviceAccount = require('./config/chat-app-f6f7a-firebase-adminsdk-me45e-988b9438d8.json'); // Make sure this path is correct
+const serviceAccount = require('./config/chat-app-f6f7a-firebase-adminsdk-me45e-988b9438d8.json');
 
-// Initialize Firebase Admin SDK
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
@@ -23,7 +22,6 @@ app.get('/', (req, res) => {
 io.on('connection', async (socket) => {
     console.log('New client connected');
 
-    // Load previous messages
     const messagesSnapshot = await db.collection('messages').get();
     messagesSnapshot.forEach((doc) => {
         socket.emit('chat message', doc.data());
