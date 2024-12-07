@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 const admin = require('firebase-admin');
-const serviceAccount = require('./config/serviceAccountKey.json'); // Ensure this path is correct
+const serviceAccount = require('./config/chat-app-f6f7a-firebase-adminsdk-me45e-988b9438d8.json'); // Make sure this path is correct
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
