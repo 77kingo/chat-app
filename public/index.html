@@ -8,24 +8,27 @@
     </style>
 </head>
 <body>
-    <div id="login-container">
+    <div id="auth-container">
         <input id="email" type="email" placeholder="Email" required />
         <input id="password" type="password" placeholder="Password" required />
         <button id="login-button">Login</button>
         <button id="signup-button">Sign Up</button>
     </div>
-    <input id="username" placeholder="Enter your username" autocomplete="off" style="display: none;" />
-    <ul id="messages"></ul>
-    <form id="form" action="" style="display: none;">
-        <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
+    <div id="chat-container" style="display: none;">
+        <input id="username" placeholder="Enter your username" autocomplete="off" />
+        <ul id="messages"></ul>
+        <form id="form" action="">
+            <input id="input" autocomplete="off" /><button>Send</button>
+        </form>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script type="module">
         import { auth, db } from './firebase-config.js';
         import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
         import { collection, addDoc, getDocs } from 'firebase/firestore';
 
-        const loginContainer = document.getElementById('login-container');
+        const authContainer = document.getElementById('auth-container');
+        const chatContainer = document.getElementById('chat-container');
         const usernameInput = document.getElementById('username');
         const form = document.getElementById('form');
         const input = document.getElementById('input');
@@ -33,6 +36,7 @@
         const passwordInput = document.getElementById('password');
         const loginButton = document.getElementById('login-button');
         const signupButton = document.getElementById('signup-button');
+        const messagesList = document.getElementById('messages');
 
         loginButton.addEventListener('click', async () => {
             try {
@@ -52,102 +56,17 @@
 
         onAuthStateChanged(auth, user => {
             if (user) {
-                loginContainer.style.display = 'none';
-                usernameInput.style.display = 'block';
-                form.style.display = 'block';
-            } else {
-                loginContainer.style.display = 'block';
-                usernameInput.style.display = 'none';
-                form.style.display = 'none';
-            }
-        });
-
-        var socket = io();
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (input.value && usernameInput.value) {
-                socket.emit('chat message', { user: usernameInput.value, message: input.value });
-                input.value = '';
-            }
-        });
-
-        socket.on('chat message', function(data) {
-            var item = document.createElement('li');
-            item.textContent = data.user + ": " + data.message;
-            document.getElementById('messages').appendChild(item);
-        });
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Chat App</title>
-    <style>
-        #messages { list-style-type: none; }
-        #messages li { padding: 8px; border-bottom: 1px solid #ddd; }
-    </style>
-</head>
-<body>
-    <div id="login-container">
-        <input id="email" type="email" placeholder="Email" required />
-        <input id="password" type="password" placeholder="Password" required />
-        <button id="login-button">Login</button>
-        <button id="signup-button">Sign Up</button>
-    </div>
-    <input id="username" placeholder="Enter your username" autocomplete="off" style="display: none;" />
-    <ul id="messages"></ul>
-    <form id="form" action="" style="display: none;">
-        <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
-    <script src="/socket.io/socket.io.js"></script>
-    <script type="module">
-        import { auth, db } from './firebase-config.js';
-        import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-        import { collection, addDoc, getDocs } from 'firebase/firestore';
-
-        const loginContainer = document.getElementById('login-container');
-        const usernameInput = document.getElementById('username');
-        const form = document.getElementById('form');
-        const input = document.getElementById('input');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const loginButton = document.getElementById('login-button');
-        const signupButton = document.getElementById('signup-button');
-
-        loginButton.addEventListener('click', async () => {
-            try {
-                await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-            } catch (error) {
-                console.error('Login Error:', error);
-            }
-        });
-
-        signupButton.addEventListener('click', async () => {
-            try {
-                await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-            } catch (error) {
-                console.error('Signup Error:', error);
-            }
-        });
-
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                loginContainer.style.display = 'none';
-                usernameInput.style.display = 'block';
-                form.style.display = 'block';
+                authContainer.style.display = 'none';
+                chatContainer.style.display = 'block';
                 loadMessages();
             } else {
-                loginContainer.style.display = 'block';
-                usernameInput.style.display = 'none';
-                form.style.display = 'none';
+                authContainer.style.display = 'block';
+                chatContainer.style.display = 'none';
             }
         });
 
         const loadMessages = async () => {
             const messagesSnapshot = await getDocs(collection(db, 'messages'));
-            const messagesList = document.getElementById('messages');
             messagesList.innerHTML = ''; // Clear existing messages
             messagesSnapshot.forEach((doc) => {
                 const data = doc.data();
@@ -169,11 +88,4 @@
             }
         });
 
-        socket.on('chat message', function(data) {
-            const item = document.createElement('li');
-            item.textContent = `${data.user}: ${data.message}`;
-            document.getElementById('messages').appendChild(item);
-        });
-    </script>
-</body>
-</html>
+        socket.on('chat message', function(data
